@@ -1,6 +1,7 @@
 from app import create_app
+from app.config import config
 
-app = create_app()
+app = create_app(config)
 
 @app.route('/')
 def main():
