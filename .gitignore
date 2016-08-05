@@ -1,3 +1,4 @@
 env/
 .py[oc]
 .idea/
+__pycache__
