@@ -1,4 +1,7 @@
-import time
+from time import monotonic
+from app.utils import get_logger
+
+logger = get_logger('Middleware.Timing')
 
 
 class ResponseTimingMiddleware(object):
@@ -6,14 +9,14 @@ class ResponseTimingMiddleware(object):
         self.app = app
 
     def __call__(self, environ, start_response):
-        start_time = time.time()
+        start_time = monotonic()
         response = self.app(environ, start_response)
-        response_time = (time.time() - start_time) * 1000
+        response_time = (monotonic() - start_time) * 1000
         data = {
             'path': environ.get('PATH_INFO'),
             'method': environ.get('REQUEST_METHOD'),
             'time': int(response_time)
         }
-        print(data)
+        logger.info(data)
 
         return response

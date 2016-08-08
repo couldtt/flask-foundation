@@ -11,7 +11,8 @@ class base_config(object):
     REDIS_HOST = os.environ.get('REDIS_TCP_ADDR', '127.0.0.1')
     REDIS_PORT = os.environ.get('REDIS_TCP_PORT', 6379)
 
-    BROKER_URL = 'redis://{}:{}'.format(REDIS_HOST, REDIS_PORT)
+    REDIS_URL = 'redis://{}:{}'.format(REDIS_HOST, REDIS_PORT)
+    BROKER_URL = REDIS_URL
     BROKER_BACKEND = BROKER_URL
 
     CACHE_HOST = os.environ.get('CACHE_ENV_HOST', '127.0.0.1')

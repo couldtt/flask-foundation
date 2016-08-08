@@ -6,6 +6,7 @@ from app.extensions import (
     cache,
     bcrypt,
     celery,
+    redis,
 )
 from app.handlers import (
     index,
@@ -28,6 +29,7 @@ def register_extensions(app):
     cache.init_app(app)
     bcrypt.init_app(app)
     celery.config_from_object(app.config)
+    redis.init_app(app)
 
 
 def register_error_handlers(app):
