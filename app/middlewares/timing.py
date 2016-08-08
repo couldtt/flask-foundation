@@ -14,5 +14,6 @@ class ResponseTimingMiddleware(object):
             'method': environ.get('REQUEST_METHOD'),
             'time': int(response_time)
         }
+        print(data)
 
         return response

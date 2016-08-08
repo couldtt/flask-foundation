@@ -32,7 +32,10 @@ class base_config(object):
         POSTGRES_DB
     )
 
-    SUPPORTED_LOCALES = ['en']
+    LOADED_MIDDLEWARES = (
+        'RequestFrequencyMiddleware',
+        'ResponseTimingMiddleware',
+    )
 
 
 class dev_config(base_config):
