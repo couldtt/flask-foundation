@@ -2,7 +2,7 @@ import datetime
 from flask_security import UserMixin
 
 from app.extensions import db, cache, bcrypt
-from app.models import CURDMixin
+from app.models.mixin import CURDMixin
 
 
 class User(CURDMixin, UserMixin, db.Model):

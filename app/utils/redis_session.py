@@ -1,3 +1,7 @@
+__all__ = (
+    'RedisSessionInterface'
+)
+
 import pickle
 from datetime import timedelta
 from uuid import uuid4

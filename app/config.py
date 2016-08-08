@@ -18,11 +18,11 @@ class base_config(object):
     CACHE_PORT = os.environ.get('CACHE_ENV_PORT', '6379')
     CACHE_TYPE = 'redis'
 
-    POSTGRES_HOST = os.environ.get('DB_ENV_HOST', '')
-    POSTGRES_PORT = os.environ.get('DB_ENV_PORT', '')
+    POSTGRES_HOST = os.environ.get('DB_ENV_HOST', '127.0.0.1')
+    POSTGRES_PORT = os.environ.get('DB_ENV_PORT', '5432')
     POSTGRES_USER = os.environ.get('DB_ENV_USER', 'postgres')
     POSTGRES_PASS = os.environ.get('DB_ENV_PASS', 'postgres')
-    POSTGRES_DB = 'postgres'
+    POSTGRES_DB = 'ff'
 
     SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s:%s/%s' % (
         POSTGRES_USER,
