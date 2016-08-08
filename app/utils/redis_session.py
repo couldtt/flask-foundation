@@ -9,6 +9,8 @@ from redis import Redis
 from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionInterface, SessionMixin
 
+from app.config import config
+
 
 class RedisSession(CallbackDict, SessionMixin):
     def __init__(self, initial=None, sid=None, new=False):
@@ -27,7 +29,7 @@ class RedisSessionInterface(SessionInterface):
 
     def __init__(self, redis=None, prefix='session:'):
         if redis is None:
-            redis = Redis()
+            redis = Redis.from_url(config.REDIS_URL)
         self.redis = redis
         self.prefix = prefix
 
