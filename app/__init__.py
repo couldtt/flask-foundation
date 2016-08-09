@@ -7,9 +7,11 @@ from app.extensions import (
     bcrypt,
     celery,
     redis,
+    login_manager,
 )
 from app.handlers import (
     index,
+    login,
 )
 
 
@@ -30,6 +32,7 @@ def register_extensions(app):
     bcrypt.init_app(app)
     celery.config_from_object(app.config)
     redis.init_app(app)
+    login_manager.init_app(app)
 
 
 def register_error_handlers(app):
@@ -48,3 +51,4 @@ def register_middlewares(app):
 
 def register_handlers(app):
     app.add_url_rule('/', 'index', index)
+    app.add_url_rule('/login', 'login', login)

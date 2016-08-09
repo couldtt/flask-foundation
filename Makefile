@@ -8,9 +8,6 @@ clean:
 celery:
 	python run_celery.py -A app.tasks worker
 
-assets:
-	cd app/static && bower install && cd ..
-
 server:
 	python manage.py runserver --host 0.0.0.0
 

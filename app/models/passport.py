@@ -1,5 +1,5 @@
 import datetime
-from flask_security import UserMixin
+from flask_security import UserMixin, RoleMixin
 
 from app.extensions import db, cache, bcrypt
 from app.models.mixin import CURDMixin
@@ -55,3 +55,14 @@ class User(CURDMixin, UserMixin, db.Model):
             'active': active_users,
             'inactive': inactive_users
         }
+
+
+class Role(CURDMixin, RoleMixin, db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+
+roles_users = db.Table('roles_users',
+                       db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+                       db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
