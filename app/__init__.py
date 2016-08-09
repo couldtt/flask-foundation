@@ -27,11 +27,12 @@ def create_app(config):
     register_error_handlers(app)
     register_middlewares(app)
     register_handlers(app)
+    register_controllers()
+    api.init_app(app)
     return app
 
 
 def register_extensions(app):
-    api.init_app(app)
     db.init_app(app)
     cache.init_app(app)
     bcrypt.init_app(app)
@@ -70,5 +71,5 @@ def register_handlers(app):
     register_url(app, '/', 'index', index, 'GET')
 
 
-def register_controllers(app):
-    pass
+def register_controllers():
+    api.add_resource(UserController, '/user', '/user/<string:method>')
