@@ -1,7 +1,9 @@
 import importlib
+
 from flask import Flask, jsonify
 from app.utils import RedisSessionInterface
 from app.extensions import (
+    api,
     db,
     cache,
     bcrypt,
@@ -9,10 +11,12 @@ from app.extensions import (
     redis,
     login_manager,
 )
+
 from app.handlers import (
     index,
     login,
 )
+from app.handlers.account_controller import UserController
 
 
 def create_app(config):
@@ -27,6 +31,7 @@ def create_app(config):
 
 
 def register_extensions(app):
+    api.init_app(app)
     db.init_app(app)
     cache.init_app(app)
     bcrypt.init_app(app)
@@ -39,7 +44,7 @@ def register_error_handlers(app):
     def render_error(e):
         return jsonify({'code': e.code, 'msg': e.name, 'desc': e.description}), e.code
 
-    for e in (400, 401, 404, 500):
+    for e in (400, 401, 404, 405, 500):
         app.errorhandler(e)(render_error)
 
 
@@ -49,6 +54,21 @@ def register_middlewares(app):
         app.wsgi_app = getattr(mid_mod, middleware)(app.wsgi_app)
 
 
+def register_url(app, path, endpoint, handler, methods):
+    allowed_methods = ('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTION')
+    if not isinstance(methods, list):
+        methods = [methods]
+
+    for method in methods:
+        if method.upper() not in allowed_methods:
+            raise Exception('Invalid method')
+
+    app.add_url_rule(path, endpoint, handler, methods=methods)
+
+
 def register_handlers(app):
-    app.add_url_rule('/', 'index', index)
-    app.add_url_rule('/login', 'login', login)
+    register_url(app, '/', 'index', index, 'GET')
+
+
+def register_controllers(app):
+    pass
