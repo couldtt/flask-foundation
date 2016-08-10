@@ -1,4 +1,5 @@
 import importlib
+from functools import partial
 
 from flask import Flask, jsonify
 from app.utils import RedisSessionInterface
@@ -11,25 +12,31 @@ from app.extensions import (
     redis,
     login_manager,
 )
-
-from app.handlers import (
-    index,
-    login,
+from app.urls import (
+    handlers,
+    controllers,
+    resources
 )
-from app.handlers.account_controller import UserController
 
 
-def create_app(config):
+def create_app(config, is_web=True):
     app = Flask(__name__)
     app.config.from_object(config)
     app.session_interface = RedisSessionInterface()
     register_extensions(app)
+    if is_web:
+        register_web(app)
+
+    return app
+
+
+def register_web(app):
     register_error_handlers(app)
-    register_middlewares(app)
+    register_middleware(app)
     register_handlers(app)
     register_controllers()
+    register_resource()
     api.init_app(app)
-    return app
 
 
 def register_extensions(app):
@@ -49,27 +56,36 @@ def register_error_handlers(app):
         app.errorhandler(e)(render_error)
 
 
-def register_middlewares(app):
-    mid_mod = importlib.import_module('app.middlewares')
-    for middleware in app.config['LOADED_MIDDLEWARES']:
+def register_middleware(app):
+    mid_mod = importlib.import_module('app.middleware')
+    for middleware in app.config['LOADED_MIDDLEWARE']:
         app.wsgi_app = getattr(mid_mod, middleware)(app.wsgi_app)
 
 
-def register_url(app, path, endpoint, handler, methods):
-    allowed_methods = ('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTION')
-    if not isinstance(methods, list):
-        methods = [methods]
-
-    for method in methods:
-        if method.upper() not in allowed_methods:
-            raise Exception('Invalid method')
-
-    app.add_url_rule(path, endpoint, handler, methods=methods)
-
-
 def register_handlers(app):
-    register_url(app, '/', 'index', index, 'GET')
+    def add_url_rule(app, path, endpoint, handler, methods):
+        allowed_methods = ('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTION')
+        if not isinstance(methods, list):
+            methods = [methods]
+
+        for method in methods:
+            if method.upper() not in allowed_methods:
+                raise Exception('Invalid method')
+
+        app.add_url_rule(path, endpoint, handler, methods=methods)
+
+    register_handler = partial(add_url_rule, app)
+    for handler in handlers:
+        register_handler(*handler)
 
 
 def register_controllers():
-    api.add_resource(UserController, '/user', '/user/<string:method>')
+    def register_controller(controller, url):
+        api.add_resource(controller, url, '{}/<string:method>'.format(url))
+
+    for controller in controllers:
+        register_controller(*controller)
+
+
+def register_resource():
+    pass

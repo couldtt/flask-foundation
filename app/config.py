@@ -33,7 +33,7 @@ class base_config(object):
         POSTGRES_DB
     )
 
-    LOADED_MIDDLEWARES = (
+    LOADED_MIDDLEWARE = (
         'RequestFrequencyMiddleware',
         'ResponseTimingMiddleware',
     )
