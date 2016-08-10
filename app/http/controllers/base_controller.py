@@ -3,6 +3,8 @@ from flask_restful import Resource, reqparse
 from flask_login import current_user
 from werkzeug.exceptions import HTTPException
 
+from app.utils.exceptions import custom_exceptions
+
 
 class RequestType:
     GET = 'get'
@@ -59,7 +61,8 @@ class BaseController(Resource):
             except HTTPException as e:
                 return {
                     'msg': e.name,
-                    'description': e.description,
-                }
+                    'description': custom_exceptions.get(
+                        e.code).description if e.code in custom_exceptions else e.description,
+                }, e.code
         else:
             abort(404)

@@ -88,7 +88,7 @@ def register_handlers(app):
 
 def register_controllers():
     def register_controller(controller, url):
-        api.add_resource(controller, url, '{}/<string:method>'.format(url))
+        api.add_resource(controller, url, '{}/<string:action>'.format(url))
 
     for controller in controllers:
         register_controller(*controller)
