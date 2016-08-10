@@ -1,17 +1,15 @@
 from flask import redirect, jsonify
 from flask_login import login_required, login_user, current_user
-from app import login_manager
+
 from app.models.passport import User
+from app.utils import json_resp
 
 
-@login_manager.user_loader
-def user_loader(user_id):
-    return User.get_by_id(user_id)
-
-
+@json_resp
 @login_required
 def index():
-    return 'hello {nickname}'.format(nickname=current_user.nickname)
+    return {'abc': '123'}
+    # return 'hello {nickname}'.format(nickname=current_user.nickname)
 
 
 def login():
@@ -23,4 +21,3 @@ def login():
 @login_required
 def account():
     return jsonify(current_user)
-

@@ -3,6 +3,7 @@ from functools import partial
 
 from flask import Flask, jsonify
 from app.utils import RedisSessionInterface
+from app.utils.exceptions import custom_exceptions
 from app.extensions import (
     api,
     db,
@@ -19,7 +20,7 @@ from app.urls import (
 )
 
 
-def create_app(config, is_web=True):
+def create_app(config, is_web=False):
     app = Flask(__name__)
     app.config.from_object(config)
     app.session_interface = RedisSessionInterface()
@@ -34,9 +35,15 @@ def register_web(app):
     register_error_handlers(app)
     register_middleware(app)
     register_handlers(app)
+
     register_controllers()
     register_resource()
     api.init_app(app)
+
+    from .models.passport import User
+    @login_manager.user_loader
+    def user_loader(user_id):
+        return User.get_by_id(user_id)
 
 
 def register_extensions(app):
@@ -50,9 +57,9 @@ def register_extensions(app):
 
 def register_error_handlers(app):
     def render_error(e):
-        return jsonify({'code': e.code, 'msg': e.name, 'desc': e.description}), e.code
+        return jsonify({'msg': e.name, 'description': custom_exceptions[e.code].description}), e.code
 
-    for e in (400, 401, 404, 405, 500):
+    for e in custom_exceptions.keys():
         app.errorhandler(e)(render_error)
 
 

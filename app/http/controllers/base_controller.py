@@ -1,7 +1,7 @@
 from flask import abort
 from flask_restful import Resource, reqparse
 from flask_login import current_user
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import HTTPException
 
 
 class RequestType:
@@ -56,7 +56,10 @@ class BaseController(Resource):
             try:
                 data = m(**kwargs)
                 return data
-            except BadRequest:
-                abort(400)
+            except HTTPException as e:
+                return {
+                    'msg': e.name,
+                    'description': e.description,
+                }
         else:
             abort(404)
