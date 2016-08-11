@@ -7,7 +7,7 @@ from flask import jsonify
 def json_resp(func):
     def wrapper(*args, **kwargs):
         res = func()
-        if isinstance(res, (list, dict, tuple)):
+        if isinstance(res, (list, dict, tuple, set)):
             res = jsonify(res)
 
         return res

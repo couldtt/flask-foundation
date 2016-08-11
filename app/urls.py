@@ -3,7 +3,8 @@ from app.http.handlers import (
 )
 
 from app.http.controllers import (
-    UserController
+    UserController,
+    LoginController
 )
 
 handlers = [
@@ -12,6 +13,7 @@ handlers = [
 
 controllers = [
     (UserController, '/user'),
+    (LoginController, '/login'),
 ]
 
 resources = [

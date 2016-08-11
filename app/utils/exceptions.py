@@ -16,7 +16,7 @@ class Unauthorized(HTTPException):
 
 class NotFound(HTTPException):
     code = 404
-    description = '找不到该条数据'
+    description = '找不到该资源'
 
 
 class Forbidden(HTTPException):
@@ -78,7 +78,7 @@ class TooManyRequests(HTTPException):
 
 class InternalServerError(HTTPException):
     code = 500
-    description = '服务器内部错误'
+    description = '服务器出小差了, 请稍后重试'
 
 
 class NotImplemented(HTTPException):
