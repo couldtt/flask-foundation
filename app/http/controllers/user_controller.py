@@ -11,7 +11,7 @@ class UserController(BaseAuthController):
     def index(self):
         return self.user.to_dict()
 
-    def logout(self):
+    def _post_logout(self):
         try:
             logout_user()
             return Response.success()
