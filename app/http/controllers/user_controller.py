@@ -4,7 +4,7 @@ from .base_controller import BaseAuthController
 
 class UserController(BaseAuthController):
     def index(self):
-        return {'nickname': getattr(self.user, 'nickname', '匿名')}
+        return self.user.to_dict()
 
     def logout(self):
         pass

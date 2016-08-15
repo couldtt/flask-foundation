@@ -1,10 +1,22 @@
+import datetime
 from app.extensions import db
+from app.utils import datetime2timestamp
+
+
+def manipulate(field):
+    if isinstance(field, datetime.datetime):
+        return datetime2timestamp(field)
+    else:
+        return field
 
 
 class CURDMixin(object):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
+
+    list_columns = []
+    detail_columns = []
 
     @classmethod
     def get_by_id(cls, id):
@@ -32,6 +44,14 @@ class CURDMixin(object):
     def delete(self, commit=True):
         db.session.delete(self)
         return commit and db.session.commit()
+
+    def to_dict(self, display_type='list'):
+        if display_type == 'list':
+            return {c.name: manipulate(getattr(self, c.name)) for c in
+                    self.__table__.columns if len(self.list_columns) == 0 or c.name in self.list_columns}
+        else:
+            return {c.name: manipulate(getattr(self, c.name)) for c in
+                    self.__table__.columns if len(self.detail_columns) == 0 or c.name in self.detail_columns}
 
 
 class DataTable(object):

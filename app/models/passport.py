@@ -26,6 +26,8 @@ class User(CURDMixin, UserMixin, db.Model):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+    list_columns = ['id', 'username', 'nickname', 'mobile', 'created_at', 'updated_at', 'roles']
+
     def __repr__(self):
         return '<User %s>' % self.username
 
