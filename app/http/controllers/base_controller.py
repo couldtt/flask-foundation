@@ -1,10 +1,19 @@
-import inspect
 from flask import abort
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_required
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, BadRequest
 
 from app.utils.exceptions import custom_exceptions
+from app.utils import get_logger
+
+logger = get_logger('Controller.Base')
+
+
+def invalid_return(msg, description, status_code):
+    return {
+               'msg': msg,
+               'description': description
+           }, status_code
 
 
 class RequestType:
@@ -51,20 +60,37 @@ class BaseController(BaseResource):
 
         if request_type == RequestType.GET:
             route_action = action
+            location = 'args'
         else:
             route_action = '_{}_{}'.format(request_type, action)
+            location = 'json'
 
         if hasattr(self, route_action):
             m = getattr(self, route_action)
+            annotations = m.__annotations__
+            logger.info(annotations)
+            for key_, type_ in annotations.items():
+                if key_ != 'return':
+                    self.parser.add_argument(key_, type=type_, location=location)
             try:
-                data = m(**kwargs)
+                original_args = self.parser.parse_args()
+                args = {key: val for key, val in original_args.items() if val is not None}
+            except BadRequest:
+                return invalid_return('invalid param', '参数错误', 400)
+
+            try:
+                data = m(**args)
                 return data
+            except TypeError as e:
+                logger.info(e)
+                param = str(e).split(' ')[-1].strip("'")
+                return invalid_return('missing param [{}]'.format(param), '{}参数缺失'.format(param), 400)
             except HTTPException as e:
-                return {
-                           'msg': e.name,
-                           'description': custom_exceptions.get(
-                               e.code).description if e.code in custom_exceptions else e.description,
-                       }, e.code
+                return invalid_return(e.name, custom_exceptions.get(
+                    e.code).description if e.code in custom_exceptions else e.description, e.code)
+            except Exception as e:
+                logger.error(e)
+                abort(500)
         else:
             abort(404)
 
