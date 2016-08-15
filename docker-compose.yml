@@ -5,6 +5,8 @@ services:
     restart: always
     environment:
       POSTGRES_DB: ff
+    ports:
+        - "5433:5432"
   redis:
     image: redis
     restart: always

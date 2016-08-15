@@ -1,6 +1,7 @@
 from app import create_app, db
 from app.config import config
 from app.models import *
+from app.services import user_data_store
 
 from flask_script import (
     Server,
@@ -45,6 +46,24 @@ def drop_db():
 def recreate_db():
     drop_db()
     create_db()
+
+
+@manager.command
+def create_roles():
+    roles = [
+        {'name': 'super', 'description': '超级管理员'},
+        {'name': 'seeker', 'description': '求职者'},
+        {'name': 'hr', 'description': 'HR'},
+        {'name': 'admin', 'description': '管理员'},
+        {'name': 'operation', 'description': '运营人员'}
+    ]
+    for role in roles:
+        user_data_store.create_role(
+            name=role['name'],
+            description=role['description']
+        )
+
+    user_data_store.commit()
 
 
 if __name__ == '__main__':

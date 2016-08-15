@@ -76,18 +76,24 @@ class BaseController(BaseResource):
                 original_args = self.parser.parse_args()
                 args = {key: val for key, val in original_args.items() if val is not None}
             except BadRequest:
-                return invalid_return('invalid param', '参数错误', 400)
+                return invalid_return('invalid param', '参数格式错误', 400)
+            except Exception as e:
+                logger.error(e)
+                return invalid_return('parse error', '参数解析错误', 400)
 
             try:
                 data = m(**args)
                 return data
             except TypeError as e:
+                e = str(e)
                 logger.info(e)
-                param = str(e).split(' ')[-1].strip("'")
-                return invalid_return('missing param [{}]'.format(param), '{}参数缺失'.format(param), 400)
+                param = e.split(' ')[-1].strip("'") if e.startswith(route_action) else None
+                if param is not None:
+                    return invalid_return('missing param [{}]'.format(param), '{}参数缺失'.format(param), 400)
+                else:
+                    abort(500)
             except HTTPException as e:
-                return invalid_return(e.name, custom_exceptions.get(
-                    e.code).description if e.code in custom_exceptions else e.description, e.code)
+                return invalid_return(e.name, e.description, e.code)
             except Exception as e:
                 logger.error(e)
                 abort(500)
