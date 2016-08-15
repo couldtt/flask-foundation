@@ -20,7 +20,7 @@ class RegisterController(BaseController):
                 user = user_data_store.create_user(
                     username=username,
                     pw_hash=bcrypt.generate_password_hash(password).decode('utf-8'),
-                    roles=[RoleContainer.get_seeker()]
+                    roles=[RoleContainer.get_member()]
                 )
                 user_data_store.commit()
                 return {

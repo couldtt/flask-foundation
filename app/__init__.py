@@ -2,6 +2,8 @@ import importlib
 from functools import partial
 
 from flask import Flask, jsonify
+from flask_login import current_user
+from flask_principal import Identity, identity_loaded, UserNeed, RoleNeed
 from app.utils import RedisSessionInterface
 from app.utils.exceptions import custom_exceptions
 from app.extensions import (
@@ -12,6 +14,7 @@ from app.extensions import (
     celery,
     redis,
     login_manager,
+    principal,
 )
 from app.urls import (
     handlers,
@@ -45,6 +48,14 @@ def register_web(app):
     def user_loader(user_id):
         return User.get_by_id(user_id)
 
+    @identity_loaded.connect_via(app)
+    def on_identity_loaded(sender, identity):
+        identity.user = current_user
+
+        if hasattr(current_user, 'roles'):
+            for role in current_user.roles:
+                identity.provides.add(RoleNeed(role.name))
+
 
 def register_extensions(app):
     db.init_app(app)
@@ -53,6 +64,7 @@ def register_extensions(app):
     celery.config_from_object(app.config)
     redis.init_app(app)
     login_manager.init_app(app)
+    principal.init_app(app)
 
 
 def register_error_handlers(app):

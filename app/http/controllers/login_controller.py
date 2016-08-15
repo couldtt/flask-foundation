@@ -1,5 +1,6 @@
+from flask_principal import identity_changed, Identity
 from flask_login import login_user
-from flask import abort
+from flask import abort, current_app
 
 from app.http.controllers.base_controller import BaseController
 from app.libs.response import Response
@@ -17,6 +18,9 @@ class LoginController(BaseController):
 
         try:
             login_user(user)
+            identity_changed.send(current_app._get_current_object(),
+                                  identity=Identity(user.id))
+
             return Response.success()
         except:
             abort(500)

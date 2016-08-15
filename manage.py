@@ -52,16 +52,18 @@ def recreate_db():
 def create_roles():
     roles = [
         {'name': 'super', 'description': '超级管理员'},
+        {'name': 'member', 'description': '普通会员'},
         {'name': 'seeker', 'description': '求职者'},
         {'name': 'hr', 'description': 'HR'},
         {'name': 'admin', 'description': '管理员'},
         {'name': 'operation', 'description': '运营人员'}
     ]
     for role in roles:
-        user_data_store.create_role(
-            name=role['name'],
-            description=role['description']
-        )
+        if not user_data_store.find_role(role['name']):
+            user_data_store.create_role(
+                name=role['name'],
+                description=role['description']
+            )
 
     user_data_store.commit()
 

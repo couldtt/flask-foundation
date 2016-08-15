@@ -28,6 +28,10 @@ class RoleContainer:
         return user_data_store.find_or_create_role('super')
 
     @classmethod
+    def get_member(cls):
+        return user_data_store.find_or_create_role('member')
+
+    @classmethod
     def get_seeker(cls):
         return user_data_store.find_or_create_role('seeker')
 

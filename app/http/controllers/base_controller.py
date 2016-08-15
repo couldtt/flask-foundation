@@ -1,6 +1,7 @@
 from flask import abort
 from flask_restful import Resource, reqparse
 from flask_login import current_user, login_required
+from flask_principal import Permission, RoleNeed
 from werkzeug.exceptions import HTTPException, BadRequest
 
 from app.utils.exceptions import custom_exceptions
@@ -101,5 +102,13 @@ class BaseController(BaseResource):
             abort(404)
 
 
-class BaseAuthController(BaseController):
-    method_decorators = [login_required]
+admin_permission = Permission(RoleNeed('admin'))
+member_permission = Permission(RoleNeed('member'))
+
+
+class BaseBackendAuthController(BaseController):
+    method_decorators = [login_required, admin_permission.require(http_exception=403)]
+
+
+class BaseFrontendAuthController(BaseController):
+    method_decorators = [login_required, member_permission.require(http_exception=403)]
