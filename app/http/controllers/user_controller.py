@@ -1,5 +1,10 @@
-from flask_security import login_required
+from flask import abort
+from flask_login import logout_user
 from .base_controller import BaseAuthController
+from app.libs.response import Response
+from app.utils import get_logger
+
+logger = get_logger('Controller.User')
 
 
 class UserController(BaseAuthController):
@@ -7,4 +12,9 @@ class UserController(BaseAuthController):
         return self.user.to_dict()
 
     def logout(self):
-        pass
+        try:
+            logout_user()
+            return Response.success()
+        except Exception as ex:
+            logger.error(ex)
+            abort(500)
