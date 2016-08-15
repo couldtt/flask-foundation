@@ -1,0 +1,21 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ff
+  redis:
+    image: redis
+    restart: always
+  web:
+    build: .
+    command: python server.py
+    restart: always
+    volumes:
+      - .:/code
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis

@@ -25,7 +25,7 @@ app = create_app(config)
 manager = Manager(app)
 migrate = Migrate(app, db)
 
-manager.add_command('runserver', Server(use_debugger=True, use_reloader=True))
+manager.add_command('runserver', Server(use_debugger=True, use_reloader=True, host='0.0.0.0'))
 manager.add_command('shell', Shell(make_context=_make_context))
 manager.add_command('db', MigrateCommand)
 

@@ -16,14 +16,14 @@ class base_config(object):
     BROKER_BACKEND = BROKER_URL
 
     CACHE_HOST = os.environ.get('CACHE_ENV_HOST', '127.0.0.1')
-    CACHE_PORT = os.environ.get('CACHE_ENV_PORT', '6379')
+    CACHE_PORT = os.environ.get('CACHE_ENV_PORT', 6379)
     CACHE_TYPE = 'redis'
 
     POSTGRES_HOST = os.environ.get('DB_ENV_HOST', '127.0.0.1')
     POSTGRES_PORT = os.environ.get('DB_ENV_PORT', '5432')
     POSTGRES_USER = os.environ.get('DB_ENV_USER', 'postgres')
     POSTGRES_PASS = os.environ.get('DB_ENV_PASS', 'postgres')
-    POSTGRES_DB = 'ff'
+    POSTGRES_DB = os.environ.get("DB_ENV_NAME", 'ff')
 
     SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s:%s/%s' % (
         POSTGRES_USER,
