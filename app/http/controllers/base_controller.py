@@ -107,8 +107,8 @@ member_permission = Permission(RoleNeed('member'))
 
 
 class BaseBackendAuthController(BaseController):
-    method_decorators = [login_required, admin_permission.require(http_exception=403)]
+    method_decorators = [admin_permission.require(http_exception=403), login_required]
 
 
 class BaseFrontendAuthController(BaseController):
-    method_decorators = [login_required, member_permission.require(http_exception=403)]
+    method_decorators = [member_permission.require(http_exception=403), login_required]
