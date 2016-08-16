@@ -32,17 +32,5 @@ class RoleContainer:
         return user_data_store.find_or_create_role('member')
 
     @classmethod
-    def get_seeker(cls):
-        return user_data_store.find_or_create_role('seeker')
-
-    @classmethod
-    def get_hr(cls):
-        return user_data_store.find_or_create_role('hr')
-
-    @classmethod
     def get_admin(cls):
         return user_data_store.find_or_create_role('admin')
-
-    @classmethod
-    def get_operation(cls):
-        return user_data_store.find_or_create_role('operation')
