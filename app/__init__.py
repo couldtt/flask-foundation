@@ -3,7 +3,7 @@ from functools import partial
 
 from flask import Flask, jsonify
 from flask_login import current_user
-from flask_principal import Identity, identity_loaded, UserNeed, RoleNeed
+from flask_principal import identity_loaded, RoleNeed, UserNeed
 from app.utils import RedisSessionInterface
 from app.utils.exceptions import custom_exceptions
 from app.extensions import (
@@ -51,6 +51,9 @@ def register_web(app):
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
         identity.user = current_user
+
+        if hasattr(current_user, 'id'):
+            identity.provides.add(UserNeed(current_user.id))
 
         if hasattr(current_user, 'roles'):
             for role in current_user.roles:
