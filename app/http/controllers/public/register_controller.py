@@ -1,6 +1,6 @@
 from werkzeug.exceptions import abort
 
-from app.http.controllers.base_controller import BaseController
+from app.http.controllers.public.base_controller import BasePublicController
 from app.services import user_data_store, RoleContainer
 from app.extensions import bcrypt, db
 from app.utils.exceptions import Conflict
@@ -10,7 +10,7 @@ from app.utils import get_logger
 logger = get_logger('Controller.Register')
 
 
-class RegisterController(BaseController):
+class RegisterController(BasePublicController):
     def _post_index(self, username: str, password: str):
         user = user_data_store.find_user(username=username)
         if user is not None:

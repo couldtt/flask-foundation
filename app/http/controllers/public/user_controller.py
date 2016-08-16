@@ -1,7 +1,8 @@
 from flask import abort, current_app
 from flask.ext.principal import AnonymousIdentity, identity_changed
 from flask_login import logout_user
-from .base_controller import BaseFrontendAuthController
+
+from app.http.controllers.public.base_controller import BaseFrontendAuthController
 from app.libs.response import Response
 from app.utils import get_logger
 

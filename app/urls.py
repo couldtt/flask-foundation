@@ -2,7 +2,7 @@ from app.http.handlers import (
     index,
 )
 
-from app.http.controllers import (
+from app.http.controllers.public import (
     UserController,
     LoginController,
     RegisterController,

@@ -1,56 +1,31 @@
 from flask import abort
-from flask_restful import Resource, reqparse
-from flask_login import current_user, login_required
-from flask_principal import Permission, RoleNeed
-from werkzeug.exceptions import HTTPException, BadRequest
+from flask_login import current_user
+from werkzeug.exceptions import (
+    HTTPException,
+    BadRequest,
+)
+
+from app.http.controllers.base import (
+    BaseController,
+    RequestType,
+    invalid_return,
+)
+from app.http.permissions import (
+    admin_permission,
+    member_permission,
+    login_required,
+)
 
 from app.utils.exceptions import custom_exceptions
 from app.utils import get_logger
 
-logger = get_logger('Controller.Base')
+logger = get_logger('Controller.Public.Base')
 
 
-def invalid_return(msg, description, status_code):
-    return {
-               'msg': msg,
-               'description': description
-           }, status_code
-
-
-class RequestType:
-    GET = 'get'
-    POST = 'post'
-    PUT = 'put'
-    PATCH = 'patch'
-    DELETE = 'delete'
-    OPTION = 'option'
-    HEAD = 'head'
-
-
-class BaseResource(Resource):
+class BasePublicController(BaseController):
     def __init__(self):
-        self.parser = reqparse.RequestParser()
-
-
-class BaseController(BaseResource):
-    def __init__(self):
-        super(BaseController, self).__init__()
+        super(BasePublicController, self).__init__()
         self.user = current_user
-
-    def get(self, action=None, **kwargs):
-        return self._route(RequestType.GET, action, **kwargs)
-
-    def post(self, action=None, **kwargs):
-        return self._route(RequestType.POST, action, **kwargs)
-
-    def put(self, action=None, **kwargs):
-        return self._route(RequestType.PUT, action, **kwargs)
-
-    def patch(self, action=None, **kwargs):
-        return self._route(RequestType.PATCH, action, **kwargs)
-
-    def delete(self, action=None, **kwargs):
-        return self._route(RequestType.DELETE, action, **kwargs)
 
     def _route(self, request_type, action, **kwargs):
         if action is not None and action.startswith('_'):
@@ -102,13 +77,9 @@ class BaseController(BaseResource):
             abort(404)
 
 
-admin_permission = Permission(RoleNeed('admin'))
-member_permission = Permission(RoleNeed('member'))
-
-
-class BaseBackendAuthController(BaseController):
+class BaseBackendAuthController(BasePublicController):
     method_decorators = [admin_permission.require(http_exception=403), login_required]
 
 
-class BaseFrontendAuthController(BaseController):
+class BaseFrontendAuthController(BasePublicController):
     method_decorators = [member_permission.require(http_exception=403), login_required]

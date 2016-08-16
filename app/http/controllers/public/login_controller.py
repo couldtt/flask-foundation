@@ -2,12 +2,12 @@ from flask_principal import identity_changed, Identity
 from flask_login import login_user
 from flask import abort, current_app
 
-from app.http.controllers.base_controller import BaseController
+from app.http.controllers.public.base_controller import BasePublicController
 from app.libs.response import Response
 from app.services import user_data_store
 
 
-class LoginController(BaseController):
+class LoginController(BasePublicController):
     def _post_index(self, username: str, password: str):
         user = user_data_store.find_user(username=username)
         if user is None:

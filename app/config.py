@@ -7,7 +7,7 @@ ENV_SYMBOL_NAME = 'FF'
 class base_config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY', '!@#12356789!@$XAQWQ@dfi')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
 
     REDIS_HOST = os.environ.get('REDIS_TCP_ADDR', '127.0.0.1')
     REDIS_PORT = os.environ.get('REDIS_TCP_PORT', 6379)
@@ -34,11 +34,14 @@ class base_config(object):
         POSTGRES_DB
     )
 
-
     LOADED_MIDDLEWARE = (
         'RequestFrequencyMiddleware',
         'ResponseTimingMiddleware',
     )
+
+    THIRD_APPS = {
+        'app_id': '_______________app_secret______________',
+    }
 
 
 class dev_config(base_config):

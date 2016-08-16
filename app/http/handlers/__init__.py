@@ -1,13 +1,14 @@
-from flask import redirect, jsonify, request
-from flask_login import login_required, login_user, current_user
+from app.http.permissions import (
+    member_permission,
+    admin_permission,
+    login_required
+)
 
-from app.models.passport import User
 from app.utils import json_resp
 
 
 @json_resp
+@member_permission.require(http_exception=403)
 @login_required
 def index():
-    return 'hello'
-
-
+    return 'Hello, Flask'
